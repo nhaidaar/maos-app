@@ -57,6 +57,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         rethrow;
       }
     });
+    on<AuthLoginAsGuest>((event, emit) async {
+      try {
+        final session = await _authUsecase.loginAsGuest();
+        session.fold(
+          (error) => emit(AuthError(message: getExceptionMessage(error))),
+          (success) => emit(Authenticated(user: success)),
+        );
+      } catch (_) {
+        rethrow;
+      }
+    });
 
     on<AuthLogout>((event, emit) async {
       try {

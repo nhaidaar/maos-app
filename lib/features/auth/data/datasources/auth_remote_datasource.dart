@@ -15,6 +15,7 @@ abstract class AuthRemoteDatasource {
     required String email,
     required String password,
   });
+  Future<Either<Exception, UserModel?>> loginAsGuest();
   Future<Either<Exception, void>> logout();
   Future<Either<Exception, void>> resetPassword({required String email});
   Future<Either<Exception, void>> resetEmail({required String email});
@@ -105,6 +106,16 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       }
 
       return Right(UserModel.fromJSON(session.user!.toJson()));
+    } on Exception catch (e) {
+      return Left(e);
+    }
+  }
+
+  @override
+  Future<Either<Exception, UserModel?>> loginAsGuest() async {
+    try {
+      await client.auth.signInAnonymously();
+      return Right(null);
     } on Exception catch (e) {
       return Left(e);
     }

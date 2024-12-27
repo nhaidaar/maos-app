@@ -32,6 +32,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Exception, UserModel?>> loginAsGuest() async {
+    return await _authRemoteDataSource.loginAsGuest();
+  }
+
+  @override
   Future<Either<Exception, void>> logout() async {
     return await _authRemoteDataSource.logout();
   }

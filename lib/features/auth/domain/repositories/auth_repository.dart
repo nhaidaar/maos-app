@@ -17,6 +17,8 @@ abstract class AuthRepository {
     required String password,
   });
 
+  Future<Either<Exception, UserModel?>> loginAsGuest();
+
   Future<Either<Exception, void>> logout();
 
   Future<Either<Exception, void>> resetPassword({required String email});
