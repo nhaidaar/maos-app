@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/themes.dart';
+import '../bloc/auth_bloc.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 
@@ -35,7 +37,7 @@ class AuthPage extends StatelessWidget {
 
                         // Skip Auth Button
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () => context.read<AuthBloc>().add(AuthLoginAsGuest()),
                           child: Text('Skip', style: mediumTS),
                         ),
                       ],

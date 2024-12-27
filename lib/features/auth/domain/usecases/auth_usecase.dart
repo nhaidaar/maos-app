@@ -27,6 +27,10 @@ class AuthUsecase {
     return _authRepository.login(email: email, password: password);
   }
 
+  Future<Either<Exception, UserModel?>> loginAsGuest() {
+    return _authRepository.loginAsGuest();
+  }
+
   Future<Either<Exception, void>> logout() {
     return _authRepository.logout();
   }
