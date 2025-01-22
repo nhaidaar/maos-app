@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/themes.dart';
-import '../bloc/auth_bloc.dart';
+import '../controllers/auth_controller.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 
@@ -12,6 +12,8 @@ class AuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _authController = Get.find<AuthController>();
+
     return SafeArea(
       child: DefaultTabController(
         length: 2,
@@ -36,9 +38,17 @@ class AuthPage extends StatelessWidget {
                         const Spacer(),
 
                         // Skip Auth Button
-                        GestureDetector(
-                          onTap: () => context.read<AuthBloc>().add(AuthLoginAsGuest()),
-                          child: Text('Skip', style: mediumTS),
+                        Obx(
+                          () => _authController.guestAuthLoading.value
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(),
+                                )
+                              : GestureDetector(
+                                  onTap: () => _authController.loginAsGuest(),
+                                  child: Text('Skip', style: mediumTS),
+                                ),
                         ),
                       ],
                     ),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/themes.dart';
 import '../../../../core/common/widgets/custom_button.dart';
-import '../../../../core/common/widgets/custom_snackbar.dart';
 import '../../../../core/common/widgets/custom_textfield.dart';
-import '../bloc/auth_bloc.dart';
+import '../../../../core/utils/snackbar.dart';
+import '../controllers/auth_controller.dart';
 import 'forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _authController = AuthController.instance;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _areFieldsEmpty = true;
@@ -87,19 +88,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
           const SizedBox(height: 24),
 
-          // If one of field empty, disable the sign in button
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              return state is AuthLoading
-                  ? CustomLoadingButton()
-                  : CustomButton(
-                      text: 'Login',
-                      disabled: _areFieldsEmpty,
-                      onTap: () => context
-                          .read<AuthBloc>()
-                          .add(AuthLogin(email: _emailController.text, password: _passwordController.text)),
-                    );
-            },
+          Obx(
+            () => _authController.authLoading.value
+                ? CustomLoadingButton()
+                : CustomButton(
+                    text: 'Login',
+                    disabled: _areFieldsEmpty, // If one of field empty, disable the button
+                    onTap: () => _authController.login(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    ),
+                  ),
           ),
 
           const SizedBox(height: 12),
@@ -122,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             borderColor: Theme.of(context).appColors.neutral10,
             textColor: Theme.of(context).appColors.neutral100,
-            onTap: () => showSnackbar(context, message: 'Coming soon!'),
+            onTap: () => showSnackbar(message: 'Coming soon!'),
           ),
         ],
       ),

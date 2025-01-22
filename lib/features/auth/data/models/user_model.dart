@@ -3,14 +3,12 @@ class UserModel {
   final String? email;
   final String? name;
   final String? profilePicture;
-  final bool isAdmin;
 
   UserModel({
     this.id,
     this.email,
     this.name,
     this.profilePicture,
-    this.isAdmin = false,
   });
 
   factory UserModel.fromJSON(Map<String, dynamic> map) {
@@ -19,17 +17,14 @@ class UserModel {
       email: map['email'],
       name: map['name'],
       profilePicture: map['profile_picture'],
-      isAdmin: map['is_admin'],
     );
   }
 
   Map<String, dynamic> toJSON() {
     return {
-      'id': id,
       'email': email,
       'name': name,
-      'profile_picture': profilePicture,
-      'isAdmin': isAdmin,
+      'profile_picture': profilePicture ?? '',
     };
   }
 
@@ -38,14 +33,12 @@ class UserModel {
     String? email,
     String? name,
     String? profilePicture,
-    bool? isAdmin,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
       profilePicture: profilePicture ?? this.profilePicture,
-      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 }
