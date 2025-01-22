@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/themes.dart';
 import '../../../../core/common/widgets/custom_button.dart';
-import '../../../../core/common/widgets/custom_snackbar.dart';
 import '../../../../core/common/widgets/custom_textfield.dart';
-import '../bloc/auth_bloc.dart';
+import '../../../../core/utils/snackbar.dart';
+import '../controllers/auth_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -16,6 +16,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final _authController = AuthController.instance;
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -82,23 +83,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
           const SizedBox(height: 24),
 
-          // If one of field empty, disable the sign in button
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              return state is AuthLoading
-                  ? CustomLoadingButton()
-                  : CustomButton(
-                      text: 'Register',
-                      disabled: _areFieldsEmpty,
-                      onTap: () => context.read<AuthBloc>().add(
-                            AuthRegister(
-                              name: _nameController.text,
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            ),
-                          ),
-                    );
-            },
+          Obx(
+            () => _authController.authLoading.value
+                ? CustomLoadingButton()
+                : CustomButton(
+                    text: 'Register',
+                    disabled: _areFieldsEmpty, // If one of field empty, disable the button
+                    onTap: () => _authController.register(
+                      name: _nameController.text,
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    ),
+                  ),
           ),
 
           const SizedBox(height: 12),
@@ -121,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             borderColor: Theme.of(context).appColors.neutral10,
             textColor: Theme.of(context).appColors.neutral100,
-            onTap: () => showSnackbar(context, message: 'Coming soon!'),
+            onTap: () => showSnackbar(message: 'Coming soon!'),
           ),
         ],
       ),

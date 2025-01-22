@@ -42,4 +42,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.env
+firebase.json
+firebase_options.dart
+google-services.json
+GoogleService-Info.plist
