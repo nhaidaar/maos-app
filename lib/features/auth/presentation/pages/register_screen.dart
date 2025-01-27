@@ -9,43 +9,25 @@ import '../../../../core/utils/snackbar.dart';
 import '../controllers/auth_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final AuthController authController;
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final bool registerFieldsEmpty;
+  const RegisterScreen({
+    super.key,
+    required this.authController,
+    required this.nameController,
+    required this.emailController,
+    required this.passwordController,
+    required this.registerFieldsEmpty,
+  });
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _authController = AuthController.instance;
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _areFieldsEmpty = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController.addListener(updateFieldState);
-    _emailController.addListener(updateFieldState);
-    _passwordController.addListener(updateFieldState);
-  }
-
-  @override
-  void dispose() {
-    _nameController.removeListener(updateFieldState);
-    _emailController.removeListener(updateFieldState);
-    _passwordController.removeListener(updateFieldState);
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void updateFieldState() {
-    setState(() => _areFieldsEmpty =
-        _emailController.text.isEmpty || _passwordController.text.isEmpty || _nameController.text.isEmpty);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Name Form
           CustomForm(
             label: 'Name',
-            controller: _nameController,
+            controller: widget.nameController,
             keyboardType: TextInputType.name,
             hint: 'Type your name',
           ),
@@ -66,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Email Form
           CustomForm(
             label: 'Email',
-            controller: _emailController,
+            controller: widget.emailController,
             keyboardType: TextInputType.emailAddress,
             hint: 'Type your email',
           ),
@@ -76,7 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Password Form
           CustomForm(
             label: 'Password',
-            controller: _passwordController,
+            controller: widget.passwordController,
             isPassword: true,
             hint: 'Type your password',
           ),
@@ -84,15 +66,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           const SizedBox(height: 24),
 
           Obx(
-            () => _authController.authLoading.value
+            () => widget.authController.authLoading.value
                 ? CustomLoadingButton()
                 : CustomButton(
                     text: 'Register',
-                    disabled: _areFieldsEmpty, // If one of field empty, disable the button
-                    onTap: () => _authController.register(
-                      name: _nameController.text,
-                      email: _emailController.text,
-                      password: _passwordController.text,
+                    disabled: widget.registerFieldsEmpty, // If one of field empty, disable the button
+                    onTap: () => widget.authController.register(
+                      name: widget.nameController.text,
+                      email: widget.emailController.text,
+                      password: widget.passwordController.text,
                     ),
                   ),
           ),

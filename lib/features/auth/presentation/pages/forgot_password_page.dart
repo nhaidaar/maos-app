@@ -16,25 +16,25 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _authController = AuthController.instance;
-  final _emailController = TextEditingController();
-  bool _isEmailEmpty = true;
+  final authController = AuthController.instance;
+  final emailController = TextEditingController();
+  bool isEmailEmpty = true;
 
   @override
   void initState() {
     super.initState();
-    _emailController.addListener(updateEmailState);
+    emailController.addListener(updateEmailState);
   }
 
   @override
   void dispose() {
-    _emailController.removeListener(updateEmailState);
-    _emailController.dispose();
+    emailController.removeListener(updateEmailState);
+    emailController.dispose();
     super.dispose();
   }
 
   void updateEmailState() {
-    setState(() => _isEmailEmpty = _emailController.text.isEmpty);
+    setState(() => isEmailEmpty = emailController.text.isEmpty);
   }
 
   @override
@@ -64,7 +64,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 CustomForm(
                   label: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
+                  controller: emailController,
                   hint: 'Type your email',
                 ),
               ],
@@ -73,12 +73,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           Padding(
             padding: EdgeInsets.all(16),
             child: Obx(
-              () => _authController.authLoading.value
+              () => authController.authLoading.value
                   ? CustomLoadingButton()
                   : CustomButton(
                       text: 'Done',
-                      disabled: _isEmailEmpty, // If one of field empty, disable the button
-                      onTap: () => _authController.resetPassword(email: _emailController.text),
+                      disabled: isEmailEmpty, // If one of field empty, disable the button
+                      onTap: () => authController.resetPassword(email: emailController.text),
                     ),
             ),
           ),

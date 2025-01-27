@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../../../core/common/fontstyles.dart';
 import '../../../../core/common/themes.dart';
@@ -8,41 +7,25 @@ import '../../../../core/common/widgets/custom_button.dart';
 import '../../../../core/common/widgets/custom_textfield.dart';
 import '../../../../core/utils/snackbar.dart';
 import '../controllers/auth_controller.dart';
-import 'forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final AuthController authController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final bool loginFieldsEmpty;
+  const LoginScreen({
+    super.key,
+    required this.authController,
+    required this.emailController,
+    required this.passwordController,
+    required this.loginFieldsEmpty,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _authController = AuthController.instance;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _areFieldsEmpty = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _emailController.addListener(updateFieldState);
-    _passwordController.addListener(updateFieldState);
-  }
-
-  @override
-  void dispose() {
-    _emailController.removeListener(updateFieldState);
-    _passwordController.removeListener(updateFieldState);
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void updateFieldState() {
-    setState(() => _areFieldsEmpty = _emailController.text.isEmpty || _passwordController.text.isEmpty);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Email Form
           CustomForm(
             label: 'Email',
-            controller: _emailController,
+            controller: widget.emailController,
             keyboardType: TextInputType.emailAddress,
             hint: 'Type your email',
           ),
@@ -63,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Password Form
           CustomForm(
             label: 'Password',
-            controller: _passwordController,
+            controller: widget.passwordController,
             isPassword: true,
             hint: 'Type your password',
           ),
@@ -75,12 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  PageTransition(
-                    child: const ForgotPasswordPage(),
-                    type: PageTransitionType.rightToLeft,
-                  ),
-                ),
+                onTap: () => Get.toNamed('/forgot-password'),
                 child: Text('Forgot Password?', style: mediumTS),
               ),
             ],
@@ -89,14 +67,14 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 24),
 
           Obx(
-            () => _authController.authLoading.value
+            () => widget.authController.authLoading.value
                 ? CustomLoadingButton()
                 : CustomButton(
                     text: 'Login',
-                    disabled: _areFieldsEmpty, // If one of field empty, disable the button
-                    onTap: () => _authController.login(
-                      email: _emailController.text,
-                      password: _passwordController.text,
+                    disabled: widget.loginFieldsEmpty, // If one of field empty, disable the button
+                    onTap: () => widget.authController.login(
+                      email: widget.emailController.text,
+                      password: widget.passwordController.text,
                     ),
                   ),
           ),

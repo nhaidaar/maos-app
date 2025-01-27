@@ -7,13 +7,49 @@ import '../controllers/auth_controller.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final _authController = Get.find<AuthController>();
+  State<AuthPage> createState() => _AuthPageState();
+}
 
+class _AuthPageState extends State<AuthPage> {
+  final authController = Get.find<AuthController>();
+
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool loginFieldsEmpty = true;
+  bool registerFieldsEmpty = true;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.addListener(updateFieldState);
+    emailController.addListener(updateFieldState);
+    passwordController.addListener(updateFieldState);
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void updateFieldState() {
+    setState(() {
+      loginFieldsEmpty = emailController.text.isEmpty || passwordController.text.isEmpty;
+      registerFieldsEmpty =
+          emailController.text.isEmpty || passwordController.text.isEmpty || nameController.text.isEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: DefaultTabController(
         length: 2,
@@ -39,14 +75,14 @@ class AuthPage extends StatelessWidget {
 
                         // Skip Auth Button
                         Obx(
-                          () => _authController.guestAuthLoading.value
+                          () => authController.guestAuthLoading.value
                               ? SizedBox(
                                   height: 20,
                                   width: 20,
                                   child: CircularProgressIndicator(),
                                 )
                               : GestureDetector(
-                                  onTap: () => _authController.loginAsGuest(),
+                                  onTap: () => authController.loginAsGuest(),
                                   child: Text('Skip', style: mediumTS),
                                 ),
                         ),
@@ -97,8 +133,19 @@ class AuthPage extends StatelessWidget {
               Expanded(
                 child: TabBarView(
                   children: [
-                    LoginScreen(),
-                    RegisterScreen(),
+                    LoginScreen(
+                      authController: authController,
+                      emailController: emailController,
+                      passwordController: passwordController,
+                      loginFieldsEmpty: loginFieldsEmpty,
+                    ),
+                    RegisterScreen(
+                      authController: authController,
+                      nameController: nameController,
+                      emailController: emailController,
+                      passwordController: passwordController,
+                      registerFieldsEmpty: registerFieldsEmpty,
+                    ),
                   ],
                 ),
               ),

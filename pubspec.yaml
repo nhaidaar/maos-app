@@ -23,7 +23,6 @@ dependencies:
   iconsax_plus: ^1.0.0
   image_picker: ^1.0.1
   intl: ^0.20.1
-  page_transition: ^2.0.9
 
 dev_dependencies:
   change_app_package_name: ^1.4.0
